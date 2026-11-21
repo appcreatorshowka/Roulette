@@ -1,53 +1,55 @@
+
 using UnityEngine;
-using UnityEngine.UI;
 
-public class AngelInfinityMove : MonoBehaviour // AngelInfinityMoveというクラスを定義
+public class AngelInfinityMove : MonoBehaviour
 {
-    RectTransform rect; // 変数rectにRectTransform型のコンポーネントを格納
-    Vector2 startPos; // 変数startPosにVector2型の初期位置を格納
+    RectTransform rect;
+    Vector2 startPos;
 
-    [SerializeField] float width = 100f;   // 横幅
-    [SerializeField] float height = 50f;   // 高さ
-    [SerializeField] float speed = 1f;     // 移動速度
+    [SerializeField] float width = 100f;
+    [SerializeField] float height = 50f;
+    [SerializeField] float speed = 1f;
 
-    [SerializeField] private Image image; 
+    [SerializeField] private Animator animator;
 
-    [SerializeField] private Sprite angelSprite;
-
-    [SerializeField] private Sprite devilSprite;
+    [SerializeField] private AnimationClip angelClip;
+    [SerializeField] private AnimationClip devilClip;
 
     private bool isAngel = true;
-    public bool IsAngel => isAngel; // IsAngelは読み取り専用窓口、isAngel
+
+    public bool IsAngel => isAngel;
 
     void Start()
     {
-        rect = GetComponent<RectTransform>(); // RectTransformを取得   
-        startPos = rect.anchoredPosition; // 初期位置を保存
+        rect = GetComponent<RectTransform>();
+        startPos = rect.anchoredPosition;
+
+        // 最初は天使のアニメーション
+        animator.Play(angelClip.name);
     }
 
     void Update()
     {
-        float t = Time.time * speed; // 時間に応じて変化する値を計算
+        float t = Time.time * speed;
 
-        float x = Mathf.Sin(t) * width; // 横方向の移動量を計算
-        float y = Mathf.Sin(t * 2f) * height; // 縦方向の移動量を計算
+        float x = Mathf.Sin(t) * width;
+        float y = Mathf.Sin(t * 2f) * height;
 
         rect.anchoredPosition =
-            startPos + new Vector2(x, y); // 初期位置に移動量を加算して新しい位置を設定
+            startPos + new Vector2(x, y);
     }
 
-
-    public void ToggleCharacter() // キャラクターを切り替えるメソッド
+    public void ToggleCharacter()
     {
-        isAngel = !isAngel; // isAngelが trueならfalseに、falseならtrueに切り替える
+        isAngel = !isAngel;
 
-        if (isAngel) // isAngelがtrueの場合、つまり天使の状態の場合
+        if (isAngel)
         {
-            image.sprite = angelSprite; // 画像を天使のスプライトに切り替える
+            animator.Play(angelClip.name);
         }
         else
         {
-            image.sprite = devilSprite; // 画像を悪魔のスプライトに切り替える
+            animator.Play(devilClip.name);
         }
     }
 }
