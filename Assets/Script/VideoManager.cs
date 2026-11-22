@@ -8,16 +8,16 @@ public class VideoManager : MonoBehaviour
 {
     public static VideoManager Instance;
 
-    [Header("Video Player")] // 動画再生用のVideoPlayerコンポーネント
+    [Header("Video Player")]
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private RawImage videoImage;
 
-    [Header("Video Clips")] // 再生する動画クリップ
+    [Header("Video Clips")]
     [SerializeField] private VideoClip angelVideo;
     [SerializeField] private VideoClip devilVideo;
     [SerializeField] private VideoClip angelDevilVideo;
 
-    [Header("Probability (%)")] // 動画再生の確率（％）
+    [Header("Probability (%)")]
     [Range(0, 100)]
     [SerializeField] private float angelProbability = 15f;
 
@@ -27,7 +27,7 @@ public class VideoManager : MonoBehaviour
     [Range(0, 100)]
     [SerializeField] private float angelDevilProbability = 10f;
 
-    [Header("Stop Number")] // 動画再生後の停止番号
+    [Header("Stop Number")]
     [Range(1, 6)]
     [SerializeField] private int angelStopNumber = 2;
 
@@ -44,12 +44,13 @@ public class VideoManager : MonoBehaviour
         Devil
     }
 
-    // ★NEW：動画終了後に通知する処理
-    private Action<int> onVideoFinished; // 動画終了後に呼び出すコールバック（停止番号を引数として渡す）
+    // 動画終了後に通知する処理
+    private Action<int> onVideoFinished;
 
-    private int selectedStopNumber; // 再生する動画に対応する停止番号
+    // 再生する動画に対応する停止番号
+    private int selectedStopNumber;
 
-    private void Awake() // VideoManagerのインスタンスを初期化
+    private void Awake()
     {
         Debug.Log("★★★ VideoManager Awake実行！");
 
@@ -69,16 +70,16 @@ public class VideoManager : MonoBehaviour
             return;
         }
 
-        videoPlayer.playOnAwake = false; // VideoPlayerがAwake時に自動再生しないように設定
-        videoPlayer.isLooping = false; // VideoPlayerがループ再生しないように設定
+        videoPlayer.playOnAwake = false;
+        videoPlayer.isLooping = false;
 
-        videoImage.texture = videoPlayer.targetTexture; // RawImageにVideoPlayerのターゲットテクスチャを設定
-        videoImage.gameObject.SetActive(false); // RawImageを非表示に設定
+        videoImage.texture = videoPlayer.targetTexture;
+        videoImage.gameObject.SetActive(false);
 
-        videoPlayer.loopPointReached += OnVideoFinished; // 動画再生終了時にOnVideoFinishedメソッドを呼び出すイベントを登録
+        videoPlayer.loopPointReached += OnVideoFinished;
     }
 
-    // ★変更：確率判定と動画再生
+    // 確率判定と動画再生
     // 戻り値 true = 動画当選、false = 動画なし
     public bool TryPlayCutin(
         CharacterType character,
@@ -86,9 +87,9 @@ public class VideoManager : MonoBehaviour
     {
         Debug.Log("★動画抽選開始：" + character);
 
-        float randomValue = UnityEngine.Random.Range(0f, 100f); // 0から100の範囲でランダムな値を生成
+        float randomValue = UnityEngine.Random.Range(0f, 100f);
 
-        VideoClip selectedVideo = null; // 再生する動画クリップを格納する変数
+        VideoClip selectedVideo = null;
 
         if (character == CharacterType.Angel)
         {
@@ -119,66 +120,76 @@ public class VideoManager : MonoBehaviour
             }
         }
 
-        if (selectedVideo == null) // 動画が選ばれなかった場合
+        // 動画が選ばれなかった場合
+        if (selectedVideo == null)
         {
-            return false; // 動画が選ばれなかった場合、falseを返す
+            Debug.Log("★動画なし：通常動作");
+            return false;
         }
 
-        // ★NEW：終了後に実行する処理を保存
-        onVideoFinished = finishedCallback; // 動画終了後に呼び出すコールバックを保存
+        // 終了後に実行する処理を保存
+        onVideoFinished = finishedCallback;
 
-        PlayVideo(selectedVideo); // 動画を再生
+        // 動画再生
+        PlayVideo(selectedVideo);
 
-        return true; // 動画が再生されたことを示す
+        return true;
     }
 
     // 動画再生
-    private void PlayVideo(VideoClip clip) // 指定された動画クリップを再生するメソッド
+    private void PlayVideo(VideoClip clip)
     {
         Debug.Log("★動画再生準備：" + clip.name);
 
-        videoPlayer.Stop(); // 既存の動画再生を停止
+        videoPlayer.Stop();
 
-        videoPlayer.clip = clip; // VideoPlayerに指定された動画クリップを設定
+        videoPlayer.clip = clip;
 
-        videoImage.gameObject.SetActive(true); // RawImageを表示して動画を再生する準備
+        videoImage.gameObject.SetActive(true);
 
-        // ★変更：イベント登録を先に行う
-        videoPlayer.prepareCompleted -= OnVideoPrepared; // 既存のイベント登録を解除
-        videoPlayer.prepareCompleted += OnVideoPrepared; // 動画準備完了時にOnVideoPreparedメソッドを呼び出すイベントを登録
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
+        videoPlayer.prepareCompleted += OnVideoPrepared;
 
-        videoPlayer.Prepare(); // 動画の準備を開始
+        videoPlayer.Prepare();
     }
 
     // 動画準備完了
-    private void OnVideoPrepared(VideoPlayer vp) // 動画の準備が完了したときに呼び出されるメソッド
+    private void OnVideoPrepared(VideoPlayer vp)
     {
         Debug.Log("★動画準備完了！再生開始");
 
-        videoPlayer.prepareCompleted -= OnVideoPrepared; // イベント登録を解除して重複呼び出しを防止
+        videoPlayer.prepareCompleted -= OnVideoPrepared;
 
-        videoPlayer.Play(); // 動画の再生を開始
+        videoPlayer.Play();
     }
 
-    // ★変更：動画終了時にRouletteControllerへ通知
-    private void OnVideoFinished(VideoPlayer vp) // 動画の再生が終了したときに呼び出されるメソッド
+    // 動画終了時
+    private void OnVideoFinished(VideoPlayer vp)
     {
-        videoImage.gameObject.SetActive(false); // RawImageを非表示にして動画再生を終了
+        Debug.Log("★動画再生終了！");
 
-        videoPlayer.Stop(); //  
+        videoImage.gameObject.SetActive(false);
 
-        // ★NEW：停止番号を渡す
-        onVideoFinished?.Invoke(selectedStopNumber); // 動画終了後に登録されたコールバックを呼び出し、停止番号を渡す
+        videoPlayer.Stop();
 
-        onVideoFinished = null; // コールバックをクリアして再利用可能にする
+        // 停止番号を渡す
+        onVideoFinished?.Invoke(selectedStopNumber);
+
+        // コールバックをクリア
+        onVideoFinished = null;
     }
 
-    private void OnDestroy() // VideoManagerが破棄されるときに呼び出されるメソッド
+    private void OnDestroy()
     {
-        if (videoPlayer != null) //     VideoPlayerが存在する場合、イベント登録を解除してメモリリークを防止
+        if (videoPlayer != null)
         {
-            videoPlayer.loopPointReached -= OnVideoFinished; // 動画再生終了時のイベント登録を解除
-            videoPlayer.prepareCompleted -= OnVideoPrepared; // 動画準備完了時のイベント登録を解除
+            videoPlayer.loopPointReached -= OnVideoFinished;
+            videoPlayer.prepareCompleted -= OnVideoPrepared;
+        }
+
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 }

@@ -359,9 +359,9 @@ MonoBehaviour:
   width: 300
   height: 50
   speed: 1
-  image: {fileID: 217483668}
-  angelSprite: {fileID: 794005853264362711, guid: bbebda36f91c535468bd34c7afed5458, type: 3}
-  devilSprite: {fileID: 3354919609007550184, guid: c60d320a4c167b943866eb3da41d1f19, type: 3}
+  animator: {fileID: 217483672}
+  angelClip: {fileID: 7400000, guid: 4fa92cec2dfe666488c1a7a6d2f36239, type: 2}
+  devilClip: {fileID: 7400000, guid: 70d8368460824e9498fed18719442d3e, type: 2}
 --- !u!114 &217483671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -609,13 +609,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VideoManager
   videoPlayer: {fileID: 315035025}
   videoImage: {fileID: 1773570890}
-  angelVideo: {fileID: 32900000, guid: 27db383bbdb2f4542afa5cb8de58d99e, type: 3}
+  angelVideo: {fileID: 32900000, guid: 9145d61b60789e846b2e699cf2a86066, type: 3}
   devilVideo: {fileID: 32900000, guid: 01756a49ea95ed94cba3526dd58ac92e, type: 3}
   angelDevilVideo: {fileID: 32900000, guid: a974889551e807e4a80c6cc5fe5f6bb4, type: 3}
-  angelProbability: 100
-  devilProbability: 100
-  angelDevilProbability: 0
-  angelStopNumber: 2
+  angelProbability: 30
+  devilProbability: 30
+  angelDevilProbability: 10
+  angelStopNumber: 5
   devilStopNumber: 6
   angelDevilStopNumber: 1
 --- !u!328 &315035025
@@ -649,7 +649,7 @@ VideoPlayer:
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
-  m_SkipOnDrop: 1
+  m_SkipOnDrop: 0
   m_Looping: 0
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
@@ -1451,9 +1451,9 @@ MonoBehaviour:
   width: 300
   height: 50
   speed: 1
-  image: {fileID: 651724165}
-  angelSprite: {fileID: 794005853264362711, guid: bbebda36f91c535468bd34c7afed5458, type: 3}
-  devilSprite: {fileID: 3354919609007550184, guid: c60d320a4c167b943866eb3da41d1f19, type: 3}
+  animator: {fileID: 217483672}
+  angelClip: {fileID: 7400000, guid: 4fa92cec2dfe666488c1a7a6d2f36239, type: 2}
+  devilClip: {fileID: 7400000, guid: 70d8368460824e9498fed18719442d3e, type: 2}
 --- !u!1 &700431917
 GameObject:
   m_ObjectHideFlags: 0
